@@ -35,6 +35,101 @@ We see a customer as a decision function when he comes to the supermarket. Once 
 We have at our disposal a list of P expressed preferences. These preferences illustrate that a customer has preferred - or chosen - X[i] over Y[i]. We split the task of determining customers preferences into two sub-tasks:
     -  We want to clusterize the customers through their purchases so that customers with similar decisions are grouped together.
     - We want to determine for each cluster the decision function that lets the customers rank all the products.
+## Modeling
+
+### Classical Modeling - 
+
+This comprehensive overview combines insights into the decision function's role in modeling customer preferences within a market segmentation framework, grounded in utility-based choice theory. The model employs mixed integer programming (MIP) to navigate the discrete and nonlinear nature of customer choices and preferences.
+
+## Decision Function: Quantifying Customer Preferences
+
+The decision function quantifies the preference of a customer cluster \(k\) for a product pair \(j\), playing a crucial role in understanding the influence of product attributes on customer choice. It distinguishes between the utility of purchased products \(x\) and non-chosen, replaceable products \(y\).
+
+### For the Purchased Product $x$:
+
+The utility of product $x$ for customer cluster $k$ and product pair $j$ is given by:
+
+$$
+u_k(x^{(j)}) = \sum_{i=1}^{n} u_{k,i}(x_i^{(j)}) + \sigma^{-}(x_i^{(j)}) - \sigma^{+}(x_i^{(j)})
+$$
+
+Where:
+
+- $u_k(x^{(j)})$: Total utility of product \(x\) for customer cluster \(k\) and product pair \(j\).
+- $u_{k,i}(x_i^{(j)})$: Partial utility from attribute \(i\) of product \(x\) for cluster \(k\).
+- $\sigma^{-}(x_i^{(j)})$, $\sigma^{+}(x_i^{(j)})$: Slack variables for underestimation and overestimation of utility, respectively.
+
+### For Non-Chosen Replaceable Products $y$:
+
+Similarly, the utility for non-chosen products follows the same structure but applies to the alternatives that were not selected:
+
+$$
+u_k(y^{(j)}) = \sum_{i=1}^{n} u_{k,i}(y_i^{(j)}) + \sigma^{-}(y_i^{(j)}) - \sigma^{+}(y_i^{(j)})
+$$
+
+- \(u_k(y^{(j)})\): Total utility of product \(y\) for customer cluster \(k\) and product pair \(j\).
+
+## Decision (Indicator) Variable:
+
+This binary variable indicates the preference of cluster \(k\) between the purchased and non-chosen products for each pair \(j\):
+
+$$
+z_{j,k} = 
+\begin{cases}
+0, & \text{if } u_k(x^{(j)}) < u_k(y^{(j)}) \\
+1, & \text{if } u_k(x^{(j)}) \geq u_k(y^{(j)})
+\end{cases}
+$$
+
+## Objective Function:
+
+The objective is to minimize the total slack, ensuring the model's utility estimations are as accurate as possible without significant under or overestimation:
+
+$$
+\min \sum_{j=1}^{P} (\sigma^{-}(x^{(j)}) + \sigma^{+}(x^{(j)}) + \sigma^{-}(y^{(j)}) + \sigma^{+}(y^{(j)}))
+$$
+
+## Constraints for Mixed Integer Programming (MIP):
+
+### Customer Preference Constraint:
+
+Ensures at least one customer cluster prefers $x$ over $y$ for each pair $j$:
+
+$$
+\sum_{k=1}^{K} z_{j,k} \geq 1
+$$
+
+### Indicator Constraint:
+
+A large \(M\) facilitates the modeling of the decision variable, linking it with the utility differences:
+
+$$
+M(1-z_{j,k}) \leq (u_k(x^{(j)}) - u_k(y^{(j)})) < M \cdot z_{j,k}
+$$
+
+### Monotonicity Constraint:
+
+Guarantees the utility increases with attribute levels, ensuring model consistency and interpretability:
+
+$$
+u_{k,i}(x_i^{(j)})^{l+1} - u_{k,i}(x_i^{(j)})^{l} \geq \epsilon, \forall i, \forall k, l=0...L_i-1
+$$
+
+### Normalization Constraint:
+
+Normalizes the utility scale and sets a reference point, aiding in utility comparison across attributes:
+
+$$
+u_{k,i}(x_i^{(j)})^{0} = 0, \forall i, \forall k
+$$
+
+$$
+\sum u_{k,i}(x_i^{(j)})^{L_i} = 1
+$$
+
+
+
+
 
 ## Tasks
 You are asked to:
