@@ -127,6 +127,41 @@ $$
 \sum u_{k,i}(x_i^{(j)})^{L_i} = 1
 $$
 
+## Loss Function
+$$
+    L_{\text{total}} =  \lambda_{neg} L_{\text{neg}} + \lambda_p L_{\text{pref}} + \lambda_{\text{min}}L_{\text{min}} + \lambda_{\text{max}}L_{\text{max}} + P_{\text{neg}} - \sum_i \log((\Delta U ^ {(i)})^2 + \varepsilon)
+$$
+
+Where:
+
+$$
+\lambda_{neg} = 100 \quad \lambda_{p} = 0.1 \quad \lambda_{\text{min}}=\lambda_{\text{max}}=10 
+$$
+
+$$
+\Delta U ^ {(i)} = U_x^{(i)} - U_y^{(i)}
+$$
+
+
+$$
+L_{\text{pref}} = \frac{1}{|X|}\sum_{x,y \in X,Y}\left(\prod_i\text{ReLU}(\Delta U ^ {(i)})\right)
+$$
+
+$$
+L_{\text{neg}} = \sum_{x,y \in X,Y}\Bigg(\Big(\sum_i\mathcal{H}(-\Delta U^ {(i)})  \Big) - 1\Bigg)^2
+$$
+
+$$
+L_{\text{min}} = \left((U_{\text{min}} - 0)^2\right)
+$$
+
+$$
+L_{\text{max}} = \left((U_{\text{max}} - 1)^2\right)
+$$
+
+$$
+P_{\text{neg}} = -\sum_{i} \mathbf{1}_{\sum_j \mathcal{H}(-\Delta U^{(j)}) > 0} \log((\Delta U ^ {(i)})^2 + \varepsilon)
+$$
 
 
 
